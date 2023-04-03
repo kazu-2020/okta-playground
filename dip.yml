@@ -1,0 +1,57 @@
+# https://github.com/bibendi/dip
+version: '7.5'
+
+compose:
+  files:
+    - ./compose.yml
+  project_name: react-rails-okta-playground
+
+interaction:
+  bash-api:
+    description: rails コンテナを起動し、ターミナルを開く
+    service: rails
+    command: bash
+
+  bundle:
+    description: Bundler コマンドのショートカット
+    service: rails
+    command: bundle
+
+  rake:
+    description: Rake コマンドのショートカット
+    service: rails
+    command: bundle exec rake
+
+  rspec:
+    description: Rspec を実行する
+    service: rails
+    environment:
+      RAILS_ENV: test
+    command: bundle exec rspec
+
+  rubocop:
+    description: Rubocop を実行する
+    service: rails
+    commands: bundle exec rubocop
+
+  rails:
+    description: Rails コマンドのショートカット
+    service: rails
+    command: bin/rails
+    subcommands:
+      s:
+        description: API サーバー(http://localhost:3000)を立ち上げる
+        service: api
+        compose:
+          run_options: [service-ports, use-aliases]
+
+  psql:
+    description: psql コンソールを開く
+    service: db
+    command: psql -h openapi-sample-db-1 -U apiuser
+
+provision:
+  - dip compose down --volumes
+  - dip compose up -d db
+  - dip bash-api -c ./bin/setup
+  - echo "Successful docker containers init 🚀"

@@ -1,0 +1,46 @@
+version: '3.8'
+
+x-api: &api-base
+  build:
+    context: ./api
+    dockerfile: Dockerfile
+    target: development
+  tty: true
+  stdin_open: true
+  volumes:
+    - type: volume
+      source: bundle_cache
+      target: /usr/local/bundle
+    - type: bind
+      source: ./api
+      target: /myapp
+  depends_on:
+    - db
+  environment:
+    - RAILS_ENV=development
+    - DATABASE_URL=postgres://apiuser:password@db:5432/api_development
+
+services:
+  rails:
+    <<: *api-base
+    command: bundle exec rails
+
+  api:
+    <<: *api-base
+    command: rails server -b '0.0.0.0'
+    ports:
+      - '3000:3000'
+
+  db:
+    image: postgres:13.10
+    volumes:
+      - type: volume
+        source: db_data
+        target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=apiuser
+      - POSTGRES_PASSWORD=password
+
+volumes:
+  bundle_cache:
+  db_data:
