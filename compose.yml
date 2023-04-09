@@ -25,11 +25,39 @@ services:
     <<: *api-base
     command: bundle exec rails
 
-  api:
+  api: &api
     <<: *api-base
     command: rails server -b '0.0.0.0'
     ports:
       - '3000:3000'
+
+  solargraph:
+    <<: *api-base
+    command: bundle exec solargraph socket --host=0.0.0.0 --port 7658
+    ports:
+      - '7658:7658'
+
+  api-debug:
+    <<: *api
+    command:
+      [
+        'rdbg',
+        '-n',
+        '--open',
+        '--host',
+        '0.0.0.0',
+        '--port',
+        '12345',
+        '-c',
+        '--',
+        'rails',
+        'server',
+        '-b',
+        '0.0.0.0',
+      ]
+    ports:
+      - '3000:3000'
+      - '12345:12345'
 
   db:
     image: postgres:13.10

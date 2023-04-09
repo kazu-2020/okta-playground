@@ -18,10 +18,6 @@ RUN apt-get update -qq && \
 RUN mkdir /myapp
 WORKDIR /myapp
 
-# myappuserを作成し、権限を付与
-RUN useradd -m myappuser && \
-    chown -R myappuser:myappuser /myapp
-
 # GemfileとGemfile.lockをコピー
 COPY Gemfile /myapp/Gemfile
 COPY Gemfile.lock /myapp/Gemfile.lock
@@ -33,11 +29,10 @@ FROM builder as development
 RUN bundle install
 
 # プロジェクトのファイルをコピー
-COPY --chown=myappuser:myappuser . /myapp
+COPY . /myapp
 
 # プロジェクトのデフォルトのポートを公開
 EXPOSE 3000
 
 # コンテナ起動時に実行されるコマンド
-USER myappuser
 CMD ["/usr/bin/bash"]

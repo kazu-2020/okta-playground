@@ -1,0 +1,9 @@
+{
+  "solargraph.useBundler": true,
+  "solargraph.transport": "external",
+  "solargraph.externalServer": {
+    "host": "localhost",
+    "port": 7658
+  },
+  "solargraph.logLevel": "debug"
+}

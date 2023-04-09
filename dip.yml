@@ -34,6 +34,12 @@ interaction:
     service: rails
     commands: bundle exec rubocop
 
+  solargraph:
+    description: Sorargraph Server を立ち上げる
+    service: solargraph
+    compose:
+      run_options: [service-ports, use-aliases]
+
   rails:
     description: Rails コマンドのショートカット
     service: rails
@@ -42,6 +48,11 @@ interaction:
       s:
         description: API サーバー(http://localhost:3000)を立ち上げる
         service: api
+        compose:
+          run_options: [service-ports, use-aliases]
+      s-debug:
+        description: API サーバー(http://localhost:3000)を debug mode で立ち上げる
+        service: api-debug
         compose:
           run_options: [service-ports, use-aliases]
 
