@@ -31,6 +31,15 @@ module ScimV2
       end
     end
 
+    def replace
+      super do |record_id, scim_resource|
+        user = storage_class.find(record_id)
+        scim_resource.active ? user.save_from_scim!(scim_resource) : user.destroy!
+
+        user.to_scim(location: url_for(action: :show, id: user.id))
+      end
+    end
+
     private
 
     def query
